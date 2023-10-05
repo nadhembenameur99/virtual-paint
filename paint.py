@@ -35,7 +35,7 @@ minRange = hsvVal[0]
 maxRange = hsvVal[1]
 
 # Initializing the webcam
-cap = cv2.VideoCapture(1)         # 0, 1, 2, ... webcam port number
+cap = cv2.VideoCapture(0)         # 0, 1, 2, ... webcam port number
 cap.set(3,720)                    # width of camera
 cap.set(4,480)                    # height of camera
 

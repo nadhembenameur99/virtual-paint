@@ -26,14 +26,16 @@ print("# Press 'q' to exit the program     #")
 print("#####################################")
 print("\n")
 
+
 # Required callback method for trackbars
 def nothing():
     pass
 
+
 # Initializing the webcam
-cap = cv2.VideoCapture(1)         # 0, 1, 2, ... are used webcam no
-cap.set(3,1280)                   # Setting width of camera
-cap.set(4,720)                    # Setting height of camera
+cap = cv2.VideoCapture(0)  # 0, 1, 2, ... are used webcam no
+cap.set(3, 1280)  # Setting width of camera
+cap.set(4, 720)  # Setting height of camera
 
 # Create a window for trackbars which adjust object's color
 cv2.namedWindow("Identifying")
@@ -54,13 +56,13 @@ while True:
     ret, frame = cap.read()
     if not ret:
         break
-    
+
     # Flip the frame horizontally (That makes mirror effect).
     frame = cv2.flip(frame, 1)
-    
+
     # Convert to BGR image to HSV image.
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    
+
     # Get the trackbars's values that user changing
     minH = cv2.getTrackbarPos("Min H", "Identifying")
     minS = cv2.getTrackbarPos("Min S", "Identifying")
@@ -68,34 +70,34 @@ while True:
     maxH = cv2.getTrackbarPos("Max H", "Identifying")
     maxS = cv2.getTrackbarPos("Max S", "Identifying")
     maxV = cv2.getTrackbarPos("Max V", "Identifying")
-    
+
     # Set the minimum and maximum HSV range
     minRange = np.array([minH, minS, minV])
     maxRange = np.array([maxH, maxS, maxV])
-    
+
     # Filter the image and get binary mask (white represents object's color)
     mask = cv2.inRange(hsv, minRange, maxRange)
-    
+
     # Also show real color of object
     coloredObject = cv2.bitwise_and(frame, frame, mask=mask)
-    
+
     # Convert the binary mask to 3 channels image
     mask3channels = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-    
+
     # Stack mask frame, normal frame, coloredObject frame
     stacked = np.hstack((mask3channels, frame, coloredObject))
-    
+
     # Show stacked frames as 60%
-    cv2.imshow("Identifying", cv2.resize(stacked, None, fx=0.6, fy=0.6))
-    
+    cv2.imshow("Identifying", cv2.resize(stacked, None, fx=0.4, fy=0.4))
+
     # If 'q' pressed then exit
     key = cv2.waitKey(1)
     if (key == ord('q') or key == ord('Q')):
         break
-    
-    #Save adjusted HSV ranges as hsvval.npy when 's' pressed
+
+    # Save adjusted HSV ranges as hsvval.npy when 's' pressed
     if (key == ord('s') or key == ord('S')):
-        hsvValues = [[minH, minS, minV],[maxH, maxS, maxV]]
+        hsvValues = [[minH, minS, minV], [maxH, maxS, maxV]]
         print(hsvValues)
         np.save('hsvVal', hsvValues)
         print("Saved as 'hsvVal.npy'...")
